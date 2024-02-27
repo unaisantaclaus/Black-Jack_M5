@@ -5,7 +5,8 @@
 
 using namespace std;
 
-void shuffle(int* mazo, int n) {
+// Funció per barrejar el mazo
+void barrejar(int* mazo, int n) {
     srand(time(0));
     for (int i = 0; i < n; i++) {
         int j = rand() % n;
@@ -13,21 +14,31 @@ void shuffle(int* mazo, int n) {
     }
 }
 
-int getValorCarta(int carta) {
+// funció per obtenir el valor d'una carta
+int valorCarta(int carta) {
     int valor = carta % 13 + 1;
     if (valor > 10) {
-        valor = 10; 
+        valor = 10; // Les figures valen 10
     }
     return valor;
 }
 
-int valorAs(int total) {
+// funció per determinar el valor de l'as pel jugador
+int valorAsJugador() {
     int valor;
-    cout << "¿Desea que el AS valga 1 o 11? ";
+    cout << "Vols que el valor de l'AS valgui 1 o 11? ";
     do {
         cin >> valor;
     } while (valor != 1 && valor != 11);
     return valor;
+}
+
+// funció per mostrar carta rebuda
+void mostrarCarta(int carta) {
+    string palos[4] = { "Piques", "Cors", "Rombs", "Trèvols" };
+    string figures[13] = { "As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rei" };
+
+    cout << figures[carta % 13] << " de " << palos[carta / 13] << endl;
 }
 
 int main() {
@@ -37,64 +48,64 @@ int main() {
         mazo[i] = i;
     }
 
-    shuffle(mazo, TAM_MAZO);
+    barrejar(mazo, TAM_MAZO);
 
-    string nombreJugador;
-    cout << "Bienvenido al juego de Blackjack!" << endl;
-    cout << "Por favor, ingresa tu nombre: ";
-    getline(cin, nombreJugador);
+    string nomJugador;
+    cout << "Benvingut al joc de Blackjack!" << endl;
+    cout << "Introdueix el teu nom: ";
+    getline(cin, nomJugador);
 
-    int jugadorPuntos = 0;
-    int bancaPuntos = 0;
+    int puntsJugador = 0;
+    int puntsBanca = 0;
 
+    // entrega de les dues primeres cartes al jugador
+    cout << nomJugador << " rep les següents cartes:" << endl;
     for (int i = 0; i < 2; i++) {
         int carta = mazo[i];
-        cout << nombreJugador << " recibe carta: " << carta << endl;
-        if (carta % 13 == 0) {
-            jugadorPuntos += valorAs(jugadorPuntos);
+        mostrarCarta(carta);
+        if (carta % 13 == 0) { // és un AS
+            puntsJugador += valorAsJugador();
         }
         else {
-            jugadorPuntos += getValorCarta(carta);
+            puntsJugador += valorCarta(carta);
         }
     }
 
+    // entrega de la primera carta a la banca
+    cout << "La banca rep la següent carta:" << endl;
     int cartaBanca = mazo[2];
-    cout << "Banca recibe carta: " << cartaBanca << endl;
-    bancaPuntos += getValorCarta(cartaBanca);
+    mostrarCarta(cartaBanca);
+    puntsBanca += valorCarta(cartaBanca);
 
-    char opcion;
+    // torn del jugador
+    char opcio;
     do {
-        cout << "¿Desea otra carta? (s/n): ";
-        cin >> opcion;
-        if (opcion == 's') {
+        cout << "Voleu una altra carta? (s/n): ";
+        cin >> opcio;
+        if (opcio == 's') {
             int carta = mazo[3];
-            cout << nombreJugador << " recibe carta: " << carta << endl;
-            if (carta % 13 == 0) { 
-                jugadorPuntos += valorAs(jugadorPuntos);
+            cout << nomJugador << " rep la següent carta:" << endl;
+            mostrarCarta(carta);
+            if (carta % 13 == 0) { // és un AS
+                puntsJugador += valorAsJugador();
             }
             else {
-                jugadorPuntos += getValorCarta(carta);
+                puntsJugador += valorCarta(carta);
             }
         }
-    } while (opcion == 's');
+    } while (opcio == 's' && puntsJugador < 21);
 
-    while (bancaPuntos < 17) {
-        int carta = mazo[4];
-        cout << "Banca recibe carta: " << carta << endl;
-        bancaPuntos += getValorCarta(carta);
+    // if per la banca
+    if (puntsJugador <= 21) {
+        cout << "Torn de la banca:" << endl;
+        while (puntsBanca < puntsJugador && puntsBanca < 17) {
+            int carta = mazo[4];
+            cout << "La banca rep la següent carta:" << endl;
+            mostrarCarta(carta);
+            puntsBanca += valorCarta(carta);
+            if (puntsBanca > 21) {
+                break;
+            }
+        }
     }
-
-    cout << "Resultados:" << endl;
-    if (jugadorPuntos > 21 || (bancaPuntos <= 21 && bancaPuntos > jugadorPuntos)) {
-        cout << "El jugador pierde y la banca gana." << endl;
-    }
-    else if (bancaPuntos > 21 || jugadorPuntos > bancaPuntos) {
-        cout << "El jugador gana y la banca pierde." << endl;
-    }
-    else {
-        cout << "Empate. El jugador pierde y la banca gana." << endl;
-    }
-
-    return 0;
-}
 
