@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// Funció per barrejar el mazo
+// funció barrejar mazo
 void barrejar(int* mazo, int n) {
     srand(time(0));
     for (int i = 0; i < n; i++) {
@@ -14,28 +14,28 @@ void barrejar(int* mazo, int n) {
     }
 }
 
-// funció per obtenir el valor d'una carta
+// funció obtenir valor una carta
 int valorCarta(int carta) {
     int valor = carta % 13 + 1;
     if (valor > 10) {
-        valor = 10; // Les figures valen 10
+        valor = 10; // figures valen 10
     }
     return valor;
 }
 
-// funció per determinar el valor de l'as pel jugador
+// funció determinar valor AS pel jugador
 int valorAsJugador() {
     int valor;
-    cout << "Vols que el valor de l'AS valgui 1 o 11? ";
+    cout << "Voleu que l'AS valgui 1 o 11? ";
     do {
         cin >> valor;
     } while (valor != 1 && valor != 11);
     return valor;
 }
 
-// funció per mostrar carta rebuda
+// funció mostrar carta rebuda
 void mostrarCarta(int carta) {
-    string palos[4] = { "Piques", "Cors", "Rombs", "Trèvols" };
+    string palos[4] = { "Piques", "Cors", "Rombs", "Trevols" };
     string figures[13] = { "As", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jota", "Reina", "Rei" };
 
     cout << figures[carta % 13] << " de " << palos[carta / 13] << endl;
@@ -52,13 +52,13 @@ int main() {
 
     string nomJugador;
     cout << "Benvingut al joc de Blackjack!" << endl;
-    cout << "Introdueix el teu nom: ";
+    cout << "Si us plau, introdueix el teu nom: ";
     getline(cin, nomJugador);
 
     int puntsJugador = 0;
     int puntsBanca = 0;
 
-    // entrega de les dues primeres cartes al jugador
+    // entrega dues primeres cartes al jugador
     cout << nomJugador << " rep les següents cartes:" << endl;
     for (int i = 0; i < 2; i++) {
         int carta = mazo[i];
@@ -71,13 +71,13 @@ int main() {
         }
     }
 
-    // entrega de la primera carta a la banca
+    // entrega primera carta a banca
     cout << "La banca rep la següent carta:" << endl;
     int cartaBanca = mazo[2];
     mostrarCarta(cartaBanca);
     puntsBanca += valorCarta(cartaBanca);
 
-    // torn del jugador
+    // torn jugador
     char opcio;
     do {
         cout << "Voleu una altra carta? (s/n): ";
@@ -95,7 +95,7 @@ int main() {
         }
     } while (opcio == 's' && puntsJugador < 21);
 
-    // if per la banca
+    // torn banca
     if (puntsJugador <= 21) {
         cout << "Torn de la banca:" << endl;
         while (puntsBanca < puntsJugador && puntsBanca < 17) {
@@ -109,3 +109,17 @@ int main() {
         }
     }
 
+    // determinar resultat
+    cout << "Resultats:" << endl;
+    if (puntsJugador > 21 || (puntsBanca <= 21 && puntsBanca > puntsJugador)) {
+        cout << "El jugador perd i la banca guanya." << endl;
+    }
+    else if (puntsBanca > 21 || puntsJugador > puntsBanca) {
+        cout << "El jugador guanya i la banca perd." << endl;
+    }
+    else {
+        cout << "Empat. El jugador perd i la banca guanya." << endl;
+    }
+
+    return 0;
+}
